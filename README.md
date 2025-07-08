@@ -2,6 +2,12 @@
 
 A smart, AI-powered tool that fetches product prices from top e-commerce websites across the world based on country and search query. Uses **Gemini API** for e-commerce site discovery and **SerpAPI + JSON-LD** scraping for accurate price extraction.
 
+
+---
+
+🎥 [Click to watch the demo](https://drive.google.com/file/d/1nJiwF_qW2FM3QC3ABAMNWR4f5qLFHEYw/view?usp=sharing)
+
+
 ---
 
 ## 🚀 Features
