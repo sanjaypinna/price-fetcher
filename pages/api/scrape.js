@@ -4,30 +4,50 @@ import axios from "axios";
 const SERP_KEY = process.env.SERP_API_KEY1;
 
 export default async function handler(req, res) {
-  if (req.method !== "POST")
+  if (req.method !== "POST") {
+    console.warn("⛔ Invalid method:", req.method);
     return res.status(405).json({ error: "Method not allowed" });
+  }
 
   const { query, country } = req.body;
-  if (!query || !country)
+  if (!query || !country) {
+    console.warn("⚠ Missing query or country", req.body);
     return res.status(400).json({ error: "Missing query or country" });
+  }
+
+  console.log("🔍 Starting price comparison for", { query, country });
 
   try {
     const sites = await getSitesForCountry(country);
+    console.log("✅ Fetched top sites:", sites);
+
     const results = [];
 
     for (const site of sites) {
+      console.log("🌐 Searching site:", site);
       const links = await searchWithSerpAPI(query, site);
+      console.log(`🔗 Found ${links.length} links from ${site}`);
+
       for (const link of links) {
+        console.log("📦 Extracting data from", link);
         const metadata = await extractMetadata(link);
-        if (metadata) results.push(metadata);
+        if (metadata) {
+          console.log("✅ Extracted metadata:", metadata);
+          results.push(metadata);
+        } else {
+          console.warn("⚠ No metadata found for", link);
+        }
       }
     }
 
+    console.log("🎯 Final results count:", results.length);
     return res.status(200).json({ results });
   } catch (err) {
-    return res.status(500).json({ error: err.message });
+    console.error("❌ Unexpected error:", err);
+    return res.status(500).json({ error: err.message || "Internal Server Error" });
   }
 }
+
 
 // --- Get top sites from Gemini ---
 const GEMINI_KEYS = [
